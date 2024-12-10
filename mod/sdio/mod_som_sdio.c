@@ -168,11 +168,14 @@ mod_som_status_t mod_som_sdio_enable_hardware_f(){
 
     sl_sleeptimer_delay_millisecond(delay);
 
+    // 2024 12 10 LW: Disabling APEX-EPSI loop for bench testing
+    /*
     while(local_voltage_runtime_ptr->voltage_adc1<3050){
         sl_sleeptimer_delay_millisecond(100);
         //ALB   Feed the DOG.
         WDOG_Feed();
     };
+    */
     GPIO_PinModeSet(gpioPortF, 11u, gpioModePushPull, 1); //SD_TP8_SW_EN
     GPIO_PinOutSet(gpioPortF, 11u);
 
