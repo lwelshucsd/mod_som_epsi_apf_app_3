@@ -26,7 +26,7 @@
   #include <mod_som_settings.h>
 #endif
 
-#define SOM_APF_NOT_DEBUG_MODE 1  // use this flag to turn on main command for debugging: 0: turn off,1: debug -- mai bui 5 May, 2022
+#define SOM_APF_NOT_DEBUG_MODE 0  // use this flag to turn on main command for debugging: 0: turn off,1: debug -- mai bui 5 May, 2022
 
 #include <efe_obp/mod_som_efe_obp.h>
 
