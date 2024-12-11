@@ -288,6 +288,27 @@ mod_som_status_t mod_som_sdio_enable_hardware_f();
 
 mod_som_status_t mod_som_sdio_disable_hardware_f();
 
+// 2024 12 10 LW: Added function for checking if SD card is installed
+/*******************************************************************************
+ * @brief
+ *   check if a card is present
+ *
+ * @return
+ *   MOD_SOM_STATUS_OK if function execute nicely
+ ******************************************************************************/
+mod_som_status_t mod_som_sdio_card_detect_f(int *result);
+
+// 2024 12 11 LW: Added simpler function for checking if SD card is installed
+/*******************************************************************************
+ * @brief
+ *   check if a card is present
+ *
+ * @return
+ *   0 if no card present
+ *   1 if card present
+ ******************************************************************************/
+int mod_som_sdio_simple_card_detect_f();
+
 mod_som_status_t mod_som_sdio_mount_fatfs_f();
 mod_som_status_t mod_som_sdio_allocate_memory_f();
 mod_som_status_t mod_som_sdio_default_settings_f();
