@@ -130,8 +130,6 @@ mod_som_status_t mod_som_sdio_init_f(){
 //    //ALB disable hardware
     //mod_som_sdio_disable_hardware_f();
 
-    disk_initialize(0);
-
     // return default mod som OK.
     //TODO handle error from the previous calls.
     return mod_som_sdio_encode_status_f(MOD_SOM_STATUS_OK);
@@ -294,43 +292,6 @@ mod_som_status_t status=0;
     // TODO handle error from the previous calls.
   return status;
 
-}
-
-// 2024 12 10 LW: Added function for checking if SD card is installed
-/*******************************************************************************
- * @brief
- *   check if a card is present
- *   result is assigned 1 for card present, 0 for card not present
- *   result only assigned if SDIO is enabled
- *
- * @return
- *   MOD_SOM_STATUS_OK if function execute nicely
- ******************************************************************************/
-mod_som_status_t mod_som_sdio_card_detect_f(int *result){
-  mod_som_status_t status=0;
-  // LW: If SDIO module is not enabled, do nothing and return bad status
-  if(mod_som_sdio_struct.enable_flag){
-      //*result = !(GPIO_PinInGet(gpioPortF, 8));
-      *result = (SDIO->PRSSTAT & SDIO_PRSSTAT_CARDDETPINLVL) > 0;
-
-  }else{
-      status=1;
-  }
-
-  return status;
-}
-
-// 2024 12 11 LW: Added simpler function for checking if SD card is installed
-/*******************************************************************************
- * @brief
- *   check if a card is present
- *
- * @return
- *   0 if no card present
- *   1 if card present
- ******************************************************************************/
-int mod_som_sdio_simple_card_detect_f(){
-  return !(GPIO_PinInGet(gpioPortF, 8));
 }
 
 
@@ -1076,7 +1037,6 @@ mod_som_status_t mod_som_sdio_write_config_f(uint8_t *data_ptr,
         remaining_bytes=remaining_bytes-byteswritten;
         if (res != FR_OK){
             //TODO write an error code
-            break;
         }
     }
     byteswritten=0;
@@ -1413,12 +1373,13 @@ FRESULT scan_files (
  ******************************************************************************/
 mod_som_status_t mod_som_sdio_ls_sd_f(){
 
-      char buff[256];
+
+	    char buff[256];
 	    strcpy(buff, "");
 	    FRESULT res;
 	    res = scan_files(buff);
 	    if (res != FR_OK) {
-	    	mod_som_io_print_f("can not read Volume\r\n");
+	    	mod_som_io_print_f("can not read Volume");
 		    return MOD_SOM_SDIO_STATUS_FAIL_READVOLUME;
 	    }
 	    return mod_som_sdio_encode_status_f(MOD_SOM_STATUS_OK);

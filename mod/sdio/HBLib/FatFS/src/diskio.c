@@ -37,23 +37,13 @@ DSTATUS disk_initialize (
 {
 
   if (drv) return STA_NOINIT;                   /* Supports only single drive */
-
-  // 2024 12 11 LW: Card detect check (using GPIO call, still works before SDIO is initialized
-  //if( (SDIO->PRSSTAT & SDIO_PRSSTAT_CARDDETPINLVL) > 0 ){
-  if(GPIO_PinInGet(gpioPortF, 8)){
-      stat |= STA_NODISK;
-  }
-  else{
-      stat &= ~STA_NODISK;
-  }
-
   if (stat & STA_NODISK) return stat;           /* No card in the socket */
 
   if (stat&STA_NOINIT)
   {
     // Initialization of SDIO and Card
     SDIO_Init(SDIO,
-              800000,             // 400kHz
+              400000,             // 400kHz
               cmuClock_HFPER);
     //ALB check status again because I added a stat = NODISK inside SendCMDWithOutDAT
     //ALB TODO figure how cmd are sent exactly to the SD card and set the timer inside disk_status
@@ -88,12 +78,6 @@ DSTATUS disk_status (
 //  if (drv==STA_NODISK){
 //      stat=STA_NODISK;
 //  }
-  if(mod_som_sdio_simple_card_detect_f()){
-      stat &= ~STA_NODISK;
-  }
-  else{
-      stat |= STA_NODISK | STA_NOINIT;
-  }
   return stat;
 }
 
