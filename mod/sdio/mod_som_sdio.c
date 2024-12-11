@@ -126,8 +126,9 @@ mod_som_status_t mod_som_sdio_init_f(){
 //    //ALB start the SDIO task.
 //    mod_som_sdio_start_f();
 
+    // 2024 12 10 LW: Removed counter-productive SDIO disable call
 //    //ALB disable hardware
-    mod_som_sdio_disable_hardware_f();
+    //mod_som_sdio_disable_hardware_f();
 
     // return default mod som OK.
     //TODO handle error from the previous calls.
@@ -260,7 +261,11 @@ mod_som_status_t status=0;
 
     //TODO use bsp_som variables to initialize the SD card.
     // Soldered sdCard slot
+
+    // 2024 12 10 LW: Updated mod_som_sdio_disable_hardware_f with correct CD LOC#0 pin
+    //GPIO_PinModeSet(gpioPortB, 10, gpioModeInput, 0);             // SDIO_CD
     GPIO_PinModeSet(gpioPortB, 10, gpioModeInput, 0);             // SDIO_CD
+
     GPIO_PinModeSet(gpioPortE, 15, gpioModePushPullAlternate, 0); // SDIO_CMD
     GPIO_PinModeSet(gpioPortE, 14, gpioModePushPullAlternate, 0); // SDIO_CLK
     GPIO_PinModeSet(gpioPortA, 0, gpioModePushPullAlternate, 0);  // SDIO_DAT0
