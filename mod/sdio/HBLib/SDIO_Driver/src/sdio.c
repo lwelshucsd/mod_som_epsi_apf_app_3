@@ -151,6 +151,7 @@ void SDIO_ReadSingleBlock(SDIO_TypeDef *sdio_t,
   sdio_t->IFCR = (_SDIO_IFCR_CMDCOM_MASK);
 
   // 10. wait for Buffer Read Ready int
+  //while (!(sdio_t->IFCR & _SDIO_IFCR_BFRRDRDY_MASK) & !(sdio_t->IFCR & _SDIO_IFCR_DATTOUTERR_MASK));
   while (!(sdio_t->IFCR & _SDIO_IFCR_BFRRDRDY_MASK));
 
   // 11. clear previous Buffer Read Ready Int
@@ -573,11 +574,17 @@ static void SDIO_S_LowLevelRegisterInit(SDIO_TypeDef *sdio_t,
                         | SDIO_IFENC_CARDINTEN;
 
   {
+    // 2024 12 11 LW: Configure CMU for SDIOCLK to use HFXO
+    CMU->SDIOCTRL = CMU_SDIOCTRL_SDIOCLKSEL_HFXO;
+
     // Calculate the divisor for SD clock frequency
-    uint32_t divisor_u32 = CMU_ClockFreqGet(mainClock_t) / sdioFreq_u32;
-    sdio_t->CLOCKCTRL = ((divisor_u32 << _SDIO_CLOCKCTRL_SDCLKFREQSEL_SHIFT))
-                        | (SDIO_CLOCKCTRL_INTCLKEN)
-                        | (SDIO_CLOCKCTRL_SDCLKEN);
+    // 2024 12 11 LW: Remove one factor of 2 from divisor to get correct freq
+    uint32_t clockFreq = CMU_ClockFreqGet(mainClock_t);
+    uint32_t divisor_u32 = (clockFreq / sdioFreq_u32)/2;
+    uint32_t clockBits = ((divisor_u32 << _SDIO_CLOCKCTRL_SDCLKFREQSEL_SHIFT))
+                            | (SDIO_CLOCKCTRL_INTCLKEN)
+                            | (SDIO_CLOCKCTRL_SDCLKEN);
+    sdio_t->CLOCKCTRL = clockBits;
   }
 
 //ALB I am changing to 3P3 because that is what we have

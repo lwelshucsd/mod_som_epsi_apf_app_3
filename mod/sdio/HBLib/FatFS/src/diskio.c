@@ -44,7 +44,7 @@ DSTATUS disk_initialize (
     // Initialization of SDIO and Card
     SDIO_Init(SDIO,
               400000,             // 400kHz
-              cmuClock_HFPER);
+              cmuClock_HF);
     //ALB check status again because I added a stat = NODISK inside SendCMDWithOutDAT
     //ALB TODO figure how cmd are sent exactly to the SD card and set the timer inside disk_status
     if (stat & STA_NODISK) return stat;           /* No card in the socket */
