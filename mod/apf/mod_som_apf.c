@@ -2877,7 +2877,7 @@ mod_som_apf_status_t mod_som_apf_daq_start_f(uint32_t profile_id){
         return MOD_SOM_APF_STATUS_CANNOT_OPENFILE;
     }
 
-//    sl_sleeptimer_delay_millisecond(delay1s);
+    sl_sleeptimer_delay_millisecond(200);
 
 
   //ALB start collecting CTD.
@@ -2892,7 +2892,7 @@ mod_som_apf_status_t mod_som_apf_daq_start_f(uint32_t profile_id){
 //  ////  //ALB enable SDIO hardware
 //  mod_som_sdio_enable_hardware_f();
 
-  sl_sleeptimer_delay_millisecond(3000);
+  sl_sleeptimer_delay_millisecond(1000);
 
   //ALB I am getting a pressure sample
   while(local_sbe41_runtime_ptr->consumer_ptr->record_pressure[1]==0){
@@ -2908,7 +2908,7 @@ mod_som_apf_status_t mod_som_apf_daq_start_f(uint32_t profile_id){
       }
   }
   //SAN 2023 02 20 correct for something funny status not working properly
-  if(status == MOD_SOM_APF_STATUS_NO_CTD_DATA){
+  if(status){
       mod_som_sdio_disable_hardware_f();
       sl_sleeptimer_delay_millisecond(delay100ms);
       mod_som_sbe41_stop_collect_data_f();
@@ -3090,13 +3090,13 @@ mod_som_apf_status_t mod_som_apf_daq_start_f(uint32_t profile_id){
 
       status|=mod_som_efe_sampling_f();
 
-      sl_sleeptimer_delay_millisecond(3000);
+      sl_sleeptimer_delay_millisecond(2000);
       //2025 06 12 add another timeout condition for the SBE41
       // we are assuming the data rate is 1Hz
       if( local_sbe41_runtime_ptr->sample_timeout ||
           (local_sbe41_runtime_ptr->sample_count - local_sbe41_runtime_ptr->consumer_ptr->cnsmr_cnt)>MOD_SOM_SBE41_SAMPLE_TIMEOUT/2){
           CORE_ENTER_ATOMIC();
-          mod_som_apf_ptr->daq=true;
+          mod_som_apf_ptr->daq=false;
 //          mod_som_apf_ptr->daq_requested = false;
           CORE_EXIT_ATOMIC();
           mod_som_apf_daq_stop_f();
